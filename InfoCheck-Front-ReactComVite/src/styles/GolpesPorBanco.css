@@ -1,0 +1,519 @@
+/* src/styles/GolpesPorBanco.css */
+.golpes-banco-container {
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.golpes-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  padding: 1.5rem 0;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.logo-check { width: 28px; height: 28px; }
+
+.search-bar-header {
+  flex: 1;
+  max-width: 600px;
+  position: relative;
+}
+
+.search-bar-header input {
+  width: 100%;
+  padding: 0.9rem 3.5rem 0.9rem 1.5rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 0.95rem;
+}
+
+.search-bar-header button {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #3b82f6;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.search-bar-header button svg {
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+.btn-entrar {
+  background: white;
+  border: none;
+  color: #1e3a8a;
+  padding: 0.7rem 1.8rem;
+  border-radius: 50px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-entrar:hover {
+  transform: scale(1.05);
+}
+
+.golpes-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 2rem;
+}
+
+.bancos-sidebar, .cadastroBanco-sidebar {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: fit-content;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 2rem;
+}
+
+.cadastroBanco-sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: justify;
+  gap: 20px;
+}
+
+.empresa {
+  border: 1px solid;
+}
+
+.bancos-sidebar h3 {
+  font-size: 1rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.bancos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.banco-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.banco-item:hover {
+  background: #f1f5f9;
+}
+
+.banco-item.active {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.banco-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.banco-item span {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.banco-main {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.banco-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 2rem;
+}
+
+.banco-logo-grande {
+  width: 90px;
+  height: 90px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 2.5rem;
+  flex-shrink: 0;
+}
+
+.banco-info h2 {
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.banco-descricao {
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.denuncia-box {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.denuncia-box h3 {
+  color: white;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.btn-registrar-golpe {
+  background: white;
+  border: none;
+  color: #dc2626;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-registrar-golpe:hover {
+  transform: scale(1.05);
+}
+
+.btn-registrar-golpe svg {
+  width: 20px;
+  height: 20px;
+}
+
+.golpes-section h3 {
+  font-size: 1.5rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+.golpes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.golpe-card {
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.golpe-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.usuario-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.golpe-meta strong {
+  display: block;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.golpe-tipo {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.golpe-descricao {
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.btn-ver-mais {
+  background: transparent;
+  border: none;
+  color: #3b82f6;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.golpe-footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.golpe-data {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.banco-sobre {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  height: fit-content;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 2rem;
+}
+
+.banco-sobre h3 {
+  font-size: 1.2rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+}
+
+.banco-sobre p {
+  color: #64748b;
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+.contato-oficial {
+  background: #f1f5f9;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.contato-oficial h4 {
+  font-size: 1rem;
+  color: #1e293b;
+  margin-bottom: 0.8rem;
+}
+
+.contato-oficial p {
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.btn-reportar-erro {
+  width: 100%;
+  background: transparent;
+  border: 1.5px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.7rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-reportar-erro:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 1200px) {
+  .golpes-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .bancos-sidebar, .banco-sobre {
+    position: static;
+  }
+}
+
+/* Estilos adicionais para GolpesPorBanco.css - Adicionar ao arquivo existente */
+
+/* Loading */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 16px;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  gap: 16px;
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Contatos Oficiais */
+.canal-verificado {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #10b981;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.sem-contatos {
+  color: #64748b;
+  font-style: italic;
+  padding: 16px;
+  text-align: center;
+}
+
+/* Site Oficial */
+.site-oficial {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.site-oficial strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+.site-oficial a {
+  color: #3b82f6;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.site-oficial a:hover {
+  text-decoration: underline;
+}
+
+/* Golpes - Informações Adicionais */
+.golpe-contato,
+.golpe-valor {
+  font-size: 14px;
+  padding: 8px 0;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 8px;
+}
+
+.golpe-contato strong,
+.golpe-valor strong {
+  color: #475569;
+}
+
+/* Melhorias no layout responsivo */
+@media (max-width: 768px) {
+  .banco-logo-grande {
+    width: 64px;
+    height: 64px;
+    font-size: 24px;
+  }
+  
+  .canais-lista {
+    grid-template-columns: 1fr;
+  }
+}

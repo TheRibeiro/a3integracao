@@ -1,0 +1,39 @@
+/* src/styles/Registro.css */
+
+/* Importa todos os estilos base do Login.css */
+@import './Login.css';
+
+/* Customizações específicas para Registro */
+
+.registro-content {
+  max-width: 1000px;
+}
+
+.registro-card {
+  max-width: 600px;
+  width: 100%;
+}
+
+.registro-form {
+  gap: 1.25rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .registro-content {
+    max-width: 600px;
+  }
+}
