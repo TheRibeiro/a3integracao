@@ -16,17 +16,27 @@ public class TipoGolpeService {
     @Autowired
     private TipoGolpeRepository repo;
 
-    public List<TipoGolpe> listarTodos(){
-        // Busca ordenado e remove duplicados por nome_tipo para evitar repetições no front
-        List<TipoGolpe> tipos = repo.findAll(Sort.by("nome_tipo").ascending());
-        Map<String, TipoGolpe> unicos = new LinkedHashMap<>();
-        for (TipoGolpe tipo : tipos) {
-            unicos.putIfAbsent(tipo.getNome_tipo(), tipo);
+    public List<TipoGolpe> listarTodos() {
+        try {
+            List<TipoGolpe> tipos = repo.findAll();
+
+            // Deduplicar e Ordenar em memória para evitar erro de
+            // PropertyReferenceException
+            Map<String, TipoGolpe> unicos = new LinkedHashMap<>();
+
+            tipos.stream()
+                    .filter(t -> t.getNome_tipo() != null)
+                    .sorted((t1, t2) -> t1.getNome_tipo().compareToIgnoreCase(t2.getNome_tipo()))
+                    .forEach(t -> unicos.putIfAbsent(t.getNome_tipo(), t));
+
+            return new ArrayList<>(unicos.values());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erro ao listar tipos de golpe: " + e.getMessage());
         }
-        return new ArrayList<>(unicos.values());
     }
 
-    public TipoGolpe salvar(TipoGolpe tipo){
+    public TipoGolpe salvar(TipoGolpe tipo) {
         return repo.save(tipo);
     }
 }
