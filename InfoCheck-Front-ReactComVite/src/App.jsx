@@ -14,36 +14,36 @@ import "./styles/styles.css";
 
 function App() {
   return (
-    
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/feed-alertas" element={<FeedAlertas />} />
-        <Route path="/verificar-contato" element={<VerificarContato />} />
-        <Route path="/golpes-por-banco" element={<GolpesPorBanco />} />
-        <Route path="/golpes-por-banco/:idBanco" element={<GolpesPorBanco />} />
-        <Route path="/estatisticas" element={<Estatisticas />} />
-        <Route path="/cadastroempresa" element={<CadastroEmpresa />} />
-        <Route
-          path="/denuncia-elaborada"
-          element={
-            <PrivateRoute>
-              <DenunciaElaborada />
-            </PrivateRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="/registro" element={<Registro />} />
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    
+
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/feed-alertas" element={<FeedAlertas />} />
+      <Route path="/verificar-contato" element={<VerificarContato />} />
+      <Route path="/golpes-por-banco" element={<GolpesPorBanco />} />
+      <Route path="/golpes-por-banco/:idBanco" element={<GolpesPorBanco />} />
+      <Route path="/estatisticas" element={<Estatisticas />} />
+      <Route path="/cadastroempresa" element={<CadastroEmpresa />} />
+      <Route
+        path="/denuncia-elaborada"
+        element={
+          <PrivateRoute>
+            <DenunciaElaborada />
+          </PrivateRoute>
+        }
+      />
+      <Route path="/login" element={<Login />} />
+      <Route path="/registro" element={<Registro />} />
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+
   );
 }
 

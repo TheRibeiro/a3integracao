@@ -2,13 +2,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { 
-  ShieldCheck, 
-  Search, 
-  User, 
-  AlertTriangle, 
-  FileText, 
-  Phone, 
+import {
+  ShieldCheck,
+  Search,
+  User,
+  AlertTriangle,
+  FileText,
+  Phone,
   ArrowRight,
   Activity,
   Lock
@@ -98,7 +98,7 @@ function Home() {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
       transition: { staggerChildren: 0.2 }
     }
@@ -106,8 +106,8 @@ function Home() {
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
       transition: { type: "spring", stiffness: 100 }
     }
@@ -137,10 +137,10 @@ function Home() {
           <button type="submit" className="search-btn">
             <Search size={20} />
           </button>
-          
+
           {mostrarSugestoes && sugestoes.length > 0 && (
             <div className="sugestoes-dropdown" style={{
-              position: 'absolute', top: '110%', left: 0, right: 0, 
+              position: 'absolute', top: '110%', left: 0, right: 0,
               background: '#1e293b', borderRadius: '12px', padding: '0.5rem',
               border: '1px solid rgba(255,255,255,0.1)', zIndex: 100
             }}>
@@ -169,7 +169,7 @@ function Home() {
         <div className="header-actions">
           {usuarioLogado ? (
             <button className="btn-secondary" onClick={() => navigate("/dashboard")}>
-              <User size={18} style={{marginRight: '8px', display: 'inline'}} />
+              <User size={18} style={{ marginRight: '8px', display: 'inline' }} />
               {usuario.nome.split(' ')[0]}
             </button>
           ) : (
@@ -180,7 +180,7 @@ function Home() {
         </div>
       </header>
 
-      <motion.section 
+      <motion.section
         className="hero-section"
         variants={containerVariants}
         initial="hidden"
@@ -190,7 +190,7 @@ function Home() {
           Segurança Financeira <br />
           <span className="hero-highlight">Inteligente e Rápida</span>
         </motion.h2>
-        
+
         <motion.p className="hero-subtitle" variants={itemVariants}>
           Proteja-se contra fraudes bancárias com nossa base de dados atualizada em tempo real.
           Verifique contatos, denuncie golpes e mantenha seu patrimônio seguro.
@@ -222,13 +222,13 @@ function Home() {
             <ShieldCheck size={20} /> Verificar Contato
           </button>
           <button className="btn-secondary" onClick={() => navigate(usuarioLogado ? "/denuncia-elaborada" : "/login")}>
-            <AlertTriangle size={20} style={{marginRight: '8px'}}/> Denunciar Golpe
+            <AlertTriangle size={20} style={{ marginRight: '8px' }} /> Denunciar Golpe
           </button>
         </motion.div>
       </motion.section>
 
       <section className="cards-grid">
-        <motion.div 
+        <motion.div
           className="feature-card"
           whileHover={{ y: -10 }}
           onClick={() => navigate("/golpes-por-banco")}
@@ -240,7 +240,7 @@ function Home() {
           <p>Acesse rapidamente os contatos verificados de todos os bancos e evite fraudes.</p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="feature-card"
           whileHover={{ y: -10 }}
           onClick={() => navigate(usuarioLogado ? "/denuncia-elaborada" : "/login")}
@@ -252,7 +252,7 @@ function Home() {
           <p>Contribua com a comunidade reportando números e contas suspeitas.</p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="feature-card"
           whileHover={{ y: -10 }}
           onClick={() => navigate("/feed-alertas")}
@@ -264,7 +264,7 @@ function Home() {
           <p>Fique por dentro dos golpes mais recentes e proteja-se preventivamente.</p>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="feature-card"
           whileHover={{ y: -10 }}
           onClick={() => navigate("/estatisticas")}

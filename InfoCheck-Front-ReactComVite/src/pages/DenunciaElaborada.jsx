@@ -11,7 +11,7 @@ function DenunciaElaborada() {
   const [etapa, setEtapa] = useState(1);
   const [sucesso, setSucesso] = useState(false);
   const [numeroDenuncia, setNumeroDenuncia] = useState("");
-  
+
   // Listas dinâmicas do banco de dados
   const [bancos, setBancos] = useState([]);
   const [tiposGolpe, setTiposGolpe] = useState([]);
@@ -63,7 +63,7 @@ function DenunciaElaborada() {
         apiGet("/api/bancos"),
         apiGet("/api/tipos-golpe")
       ]);
-      
+
       setBancos(bancosData || []);
       setTiposGolpe(tiposData || []);
     } catch (error) {
@@ -98,14 +98,14 @@ function DenunciaElaborada() {
         return;
       }
     }
-    
+
     if (etapa === 2) {
       if (!form.descricao.trim()) {
         alert("Por favor, descreva o que ocorreu.");
         return;
       }
     }
-    
+
     if (etapa < 3) {
       setEtapa(etapa + 1);
     }
@@ -147,8 +147,8 @@ function DenunciaElaborada() {
         tipoGolpeOutro: form.tipoGolpe === "outro" ? form.tipoGolpeOutro : null,
         nomeBancoOutro: form.banco === "outro" ? form.nomeBanco : null
       };
-      
-            if (!dados.idUsuario) {
+
+      if (!dados.idUsuario) {
         alert('Sessao expirada. Faca login novamente.');
         navigate('/login');
         return;
@@ -419,13 +419,13 @@ function DenunciaElaborada() {
                   <h4>Resumo</h4>
                   <p><strong>Contato:</strong> {form.contato}</p>
                   <p><strong>Tipo:</strong> {
-                    form.tipoGolpe === "outro" 
-                      ? form.tipoGolpeOutro 
+                    form.tipoGolpe === "outro"
+                      ? form.tipoGolpeOutro
                       : tiposGolpe.find(t => t.id_tipo === parseInt(form.tipoGolpe))?.nome_tipo
                   }</p>
                   <p><strong>Banco:</strong> {
-                    form.banco === "outro" 
-                      ? form.nomeBanco 
+                    form.banco === "outro"
+                      ? form.nomeBanco
                       : bancos.find(b => b.id_banco === parseInt(form.banco))?.nome_banco
                   }</p>
                   {form.valor && <p><strong>Valor:</strong> R$ {form.valor}</p>}
