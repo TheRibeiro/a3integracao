@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+// teste
 @Service
 public class TipoGolpeService {
 
@@ -27,7 +28,10 @@ public class TipoGolpeService {
             tipos.stream()
                     .filter(t -> t.getNome_tipo() != null)
                     .sorted((t1, t2) -> t1.getNome_tipo().compareToIgnoreCase(t2.getNome_tipo()))
-                    .forEach(t -> unicos.putIfAbsent(t.getNome_tipo(), t));
+                    .forEach(t -> {
+                        String key = t.getNome_tipo().trim().toUpperCase();
+                        unicos.putIfAbsent(key, t);
+                    });
 
             return new ArrayList<>(unicos.values());
         } catch (Exception e) {
