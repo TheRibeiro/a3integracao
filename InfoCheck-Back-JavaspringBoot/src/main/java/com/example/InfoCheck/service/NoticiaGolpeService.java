@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -94,10 +95,12 @@ public class NoticiaGolpeService {
     /**
      * Atualiza as notícias buscando de APIs externas
      * Este método é executado automaticamente a cada 30 minutos
+     * Executa de forma assíncrona para não bloquear a inicialização
      */
-    @Scheduled(fixedDelay = 1800000) // 30 minutos
+    @Async
+    @Scheduled(fixedDelay = 1800000, initialDelay = 300000) // 30 minutos delay, começa após 5 minutos
     public void atualizarNoticiasAutomaticamente() {
-        log.info("Iniciando atualização automática de notícias");
+        log.info("⏰ Iniciando atualização automática de notícias (Background Task)");
         buscarNoticiasDeAPIs();
     }
 
