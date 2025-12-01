@@ -33,14 +33,15 @@ public class NoticiaGolpeService {
     private String newsApiKey;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    // Palavras-chave para buscar noticias sobre golpes (lista ampliada, sem acentuacao)
+    // Palavras-chave para buscar noticias sobre golpes (lista ampliada, sem
+    // acentuacao)
     private static final String[] KEYWORDS = {
-        "golpe bancario", "fraude financeira", "golpe pix", "phishing banco",
-        "golpe whatsapp banco", "boleto falso", "fraude cartao", "golpe telefone banco",
-        "golpe motoboy", "golpe aplicativo bancario", "golpe email banco",
-        "scam banco", "fraude digital banco", "roubo de dados bancarios",
-        "vazamento de dados banco", "phishing", "fraude pix", "fraude boleto",
-        "sms falso banco", "whatsapp falso banco"
+            "golpe bancario", "fraude financeira", "golpe pix", "phishing banco",
+            "golpe whatsapp banco", "boleto falso", "fraude cartao", "golpe telefone banco",
+            "golpe motoboy", "golpe aplicativo bancario", "golpe email banco",
+            "scam banco", "fraude digital banco", "roubo de dados bancarios",
+            "vazamento de dados banco", "phishing", "fraude pix", "fraude boleto",
+            "sms falso banco", "whatsapp falso banco"
     };
 
     /**
@@ -83,7 +84,8 @@ public class NoticiaGolpeService {
     public List<NoticiaGolpeDTO> buscarPorPalavraChave(String keyword) {
         log.info("Buscando notícias com palavra-chave: {}", keyword);
         List<NoticiaGolpe> noticias = noticiaRepository
-                .findByTituloContainingIgnoreCaseOrDescricaoContainingIgnoreCaseOrderByDataPublicacaoDesc(keyword, keyword);
+                .findByTituloContainingIgnoreCaseOrDescricaoContainingIgnoreCaseOrderByDataPublicacaoDesc(keyword,
+                        keyword);
         return noticias.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
@@ -105,11 +107,11 @@ public class NoticiaGolpeService {
      */
     public Map<String, Object> testarConectividadeAPI() {
         Map<String, Object> resultado = new HashMap<>();
-        
+
         log.info("🧪 ============================================");
         log.info("🧪 INICIANDO TESTE DE CONECTIVIDADE");
         log.info("🧪 ============================================");
-        
+
         // Verifica se a API key está configurada
         if (newsApiKey == null || newsApiKey.equals("YOUR_NEWS_API_KEY_HERE")) {
             resultado.put("sucesso", false);
@@ -118,38 +120,37 @@ public class NoticiaGolpeService {
             log.error("❌ API Key não configurada");
             return resultado;
         }
-        
+
         resultado.put("apiKeyConfigurada", true);
         resultado.put("apiKeyPreview", newsApiKey.substring(0, Math.min(8, newsApiKey.length())) + "***");
-        
+
         // Testa uma requisição simples
         try {
             String testKeyword = "teste";
             String encodedKeyword = URLEncoder.encode(testKeyword, StandardCharsets.UTF_8);
             String url = String.format(
-                "https://newsapi.org/v2/everything?q=%s&pageSize=1&apiKey=%s",
-                encodedKeyword,
-                newsApiKey
-            );
-            
+                    "https://newsapi.org/v2/everything?q=%s&pageSize=1&apiKey=%s",
+                    encodedKeyword,
+                    newsApiKey);
+
             log.info("🔗 URL de teste: {}", url.replace(newsApiKey, "***"));
-            
+
             long startTime = System.currentTimeMillis();
             String response = restTemplate.getForObject(url, String.class);
             long duration = System.currentTimeMillis() - startTime;
-            
+
             log.info("⏱️ Tempo de resposta: {}ms", duration);
-            
+
             if (response == null || response.isEmpty()) {
                 resultado.put("sucesso", false);
                 resultado.put("mensagem", "Resposta vazia da API");
                 log.error("❌ Resposta vazia");
                 return resultado;
             }
-            
+
             JsonNode root = objectMapper.readTree(response);
             String status = root.has("status") ? root.get("status").asText() : "unknown";
-            
+
             if (!status.equals("ok")) {
                 String errorMessage = root.has("message") ? root.get("message").asText() : "Erro desconhecido";
                 resultado.put("sucesso", false);
@@ -158,15 +159,15 @@ public class NoticiaGolpeService {
                 log.error("❌ Erro da API: {}", errorMessage);
                 return resultado;
             }
-            
+
             resultado.put("sucesso", true);
             resultado.put("mensagem", "Conectividade OK - API respondeu corretamente");
             resultado.put("tempoResposta", duration + "ms");
             resultado.put("statusAPI", status);
-            
+
             log.info("✅ Conectividade testada com sucesso!");
             log.info("✅ Tempo de resposta: {}ms", duration);
-            
+
         } catch (org.springframework.web.client.ResourceAccessException e) {
             resultado.put("sucesso", false);
             resultado.put("mensagem", "Erro de conectividade - Timeout ou bloqueio de rede");
@@ -185,14 +186,13 @@ public class NoticiaGolpeService {
             resultado.put("tipoExcecao", e.getClass().getName());
             log.error("❌ Erro genérico: {}", e.getMessage(), e);
         }
-        
+
         log.info("🧪 ============================================");
         log.info("🧪 FIM DO TESTE DE CONECTIVIDADE");
         log.info("🧪 ============================================");
-        
+
         return resultado;
     }
-
 
     /**
      * Busca notícias de APIs externas (News API)
@@ -201,7 +201,7 @@ public class NoticiaGolpeService {
         log.info("🚀 ============================================");
         log.info("🚀 INICIANDO BUSCA DE NOTÍCIAS DE APIs EXTERNAS");
         log.info("🚀 ============================================");
-        
+
         // Se não houver API key configurada, adiciona notícias de exemplo
         if (newsApiKey == null || newsApiKey.equals("YOUR_NEWS_API_KEY_HERE")) {
             log.warn("⚠️ News API key não configurada. Adicionando notícias de exemplo.");
@@ -215,12 +215,12 @@ public class NoticiaGolpeService {
         try {
             int sucessos = 0;
             int falhas = 0;
-            
+
             // Busca notícias para cada palavra-chave
             for (int i = 0; i < KEYWORDS.length; i++) {
                 String keyword = KEYWORDS[i];
                 log.info("📰 [{}/{}] Buscando keyword: '{}'", i + 1, KEYWORDS.length, keyword);
-                
+
                 try {
                     buscarNoticiasParaKeyword(keyword);
                     sucessos++;
@@ -228,18 +228,18 @@ public class NoticiaGolpeService {
                     falhas++;
                     log.error("❌ Falha ao buscar keyword '{}': {}", keyword, e.getMessage());
                 }
-                
+
                 // Pequena pausa entre requisições para evitar rate limiting
                 if (i < KEYWORDS.length - 1) {
                     Thread.sleep(500); // 500ms entre requisições
                 }
             }
-            
+
             log.info("📊 ============================================");
             log.info("📊 RESULTADO DA BUSCA:");
             log.info("📊 Sucessos: {} | Falhas: {}", sucessos, falhas);
             log.info("📊 ============================================");
-            
+
         } catch (Exception e) {
             log.error("❌ Erro crítico ao buscar notícias: {}", e.getMessage());
             log.error("❌ Stack trace completo: ", e);
@@ -257,25 +257,24 @@ public class NoticiaGolpeService {
         try {
             String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
             url = String.format(
-                "https://newsapi.org/v2/everything?q=%s&language=pt&sortBy=publishedAt&pageSize=50&searchIn=title,description,content&apiKey=%s",
-                encodedKeyword,
-                newsApiKey
-            );
+                    "https://newsapi.org/v2/everything?q=%s&language=pt&sortBy=publishedAt&pageSize=50&searchIn=title,description,content&apiKey=%s",
+                    encodedKeyword,
+                    newsApiKey);
 
             log.info("🔄 Buscando notícias para keyword '{}' na URL: {}", keyword, url.replace(newsApiKey, "***"));
-            
+
             String response = restTemplate.getForObject(url, String.class);
-            
+
             if (response == null || response.isEmpty()) {
                 log.warn("⚠️ Resposta vazia da API para keyword '{}'", keyword);
                 return;
             }
 
-            log.debug("✅ Resposta recebida da API (primeiros 200 caracteres): {}", 
-                      response.length() > 200 ? response.substring(0, 200) + "..." : response);
+            log.debug("✅ Resposta recebida da API (primeiros 200 caracteres): {}",
+                    response.length() > 200 ? response.substring(0, 200) + "..." : response);
 
             JsonNode root = objectMapper.readTree(response);
-            
+
             // Verifica se houve erro na API
             if (root.has("status") && !root.get("status").asText().equals("ok")) {
                 String errorMessage = root.has("message") ? root.get("message").asText() : "Erro desconhecido";
@@ -296,25 +295,30 @@ public class NoticiaGolpeService {
                 log.warn("⚠️ Nenhum artigo encontrado para keyword '{}'", keyword);
             }
         } catch (org.springframework.web.client.ResourceAccessException e) {
-            // Erros de timeout ou conectividade
-            log.error("🚫 ERRO DE CONECTIVIDADE para keyword '{}': {}. Possível timeout ou bloqueio de rede.", 
-                      keyword, e.getMessage());
+            // Erros de timeout ou conectividade (inclui SocketTimeout e SSL)
+            log.error("🚫 ERRO DE CONECTIVIDADE para keyword '{}': {}. Possível timeout ou bloqueio de rede.",
+                    keyword, e.getMessage());
             log.error("   URL tentada: {}", url != null ? url.replace(newsApiKey, "***") : "N/A");
             log.error("   Causa raiz: {}", e.getCause() != null ? e.getCause().getMessage() : "Desconhecida");
+
+            // Verifica se é timeout ou SSL especificamente
+            if (e.getCause() != null) {
+                String causaMsg = e.getCause().getClass().getName();
+                if (causaMsg.contains("SocketTimeout")) {
+                    log.error("   ⏱️ Tipo: TIMEOUT - A News API demorou demais para responder");
+                } else if (causaMsg.contains("SSL")) {
+                    log.error("   🔒 Tipo: ERRO DE SSL - Possível problema com certificados no Render");
+                }
+            }
         } catch (org.springframework.web.client.HttpClientErrorException e) {
             // Erros 4xx (cliente)
-            log.error("🚫 ERRO HTTP {} ao buscar notícias para keyword '{}': {}", 
-                      e.getStatusCode(), keyword, e.getResponseBodyAsString());
+            log.error("🚫 ERRO HTTP {} ao buscar notícias para keyword '{}': {}",
+                    e.getStatusCode(), keyword, e.getResponseBodyAsString());
             log.error("   Verifique: API Key, limites de requisições, ou URL malformada");
         } catch (org.springframework.web.client.HttpServerErrorException e) {
             // Erros 5xx (servidor)
-            log.error("🚫 ERRO DO SERVIDOR (5xx) ao buscar notícias para keyword '{}': {} - {}", 
-                      keyword, e.getStatusCode(), e.getMessage());
-        } catch (java.net.SocketTimeoutException e) {
-            log.error("⏱️ TIMEOUT ao buscar notícias para keyword '{}': A News API demorou demais para responder", keyword);
-        } catch (javax.net.ssl.SSLException e) {
-            log.error("🔒 ERRO DE SSL para keyword '{}': {}. Possível problema com certificados no Render.", 
-                      keyword, e.getMessage());
+            log.error("🚫 ERRO DO SERVIDOR (5xx) ao buscar notícias para keyword '{}': {} - {}",
+                    keyword, e.getStatusCode(), e.getMessage());
         } catch (Exception e) {
             log.error("❌ Erro genérico ao buscar noticias para keyword '{}': {}", keyword, e.getMessage());
             log.error("   Tipo de exceção: {}", e.getClass().getName());
@@ -389,16 +393,26 @@ public class NoticiaGolpeService {
         List<String> tags = new ArrayList<>();
         String texto = (titulo + " " + descricao).toLowerCase();
 
-        if (texto.contains("urgente") || texto.contains("alerta")) tags.add("Urgente");
-        if (texto.contains("banco")) tags.add("Bancos");
-        if (texto.contains("pix")) tags.add("PIX");
-        if (texto.contains("cartao")) tags.add("Cartão");
-        if (texto.contains("senha")) tags.add("Senha");
-        if (texto.contains("boleto")) tags.add("Boleto");
-        if (texto.contains("telefone")) tags.add("Telefone");
-        if (texto.contains("e-mail") || texto.contains("email")) tags.add("E-mail");
-        if (texto.contains("sms")) tags.add("SMS");
-        if (texto.contains("whatsapp")) tags.add("WhatsApp");
+        if (texto.contains("urgente") || texto.contains("alerta"))
+            tags.add("Urgente");
+        if (texto.contains("banco"))
+            tags.add("Bancos");
+        if (texto.contains("pix"))
+            tags.add("PIX");
+        if (texto.contains("cartao"))
+            tags.add("Cartão");
+        if (texto.contains("senha"))
+            tags.add("Senha");
+        if (texto.contains("boleto"))
+            tags.add("Boleto");
+        if (texto.contains("telefone"))
+            tags.add("Telefone");
+        if (texto.contains("e-mail") || texto.contains("email"))
+            tags.add("E-mail");
+        if (texto.contains("sms"))
+            tags.add("SMS");
+        if (texto.contains("whatsapp"))
+            tags.add("WhatsApp");
 
         return String.join(",", tags);
     }
@@ -410,70 +424,70 @@ public class NoticiaGolpeService {
         log.info("Adicionando notícias de exemplo");
 
         List<Map<String, String>> noticiasExemplo = Arrays.asList(
-            Map.of(
-                "titulo", "Novo golpe usa números muito parecidos com os de bancos oficiais",
-                "descricao", "Criminosos estão utilizando números quase idênticos aos de centrais de atendimento para enganar clientes. Especialistas alertam para sempre verificar o contato antes de responder.",
-                "categoria", "Phishing",
-                "tags", "Telefone,Bancos,Alerta Máximo",
-                "fonte", "Portal de Notícias"
-            ),
-            Map.of(
-                "titulo", "Aumento expressivo de tentativas de phishing por SMS em todo o Brasil",
-                "descricao", "SMS falsos obtêm sucesso elevado em 'desbloqueio imediato do cartão'. Ao clicar, vítimas são levadas a páginas falsas que solicitam dados bancários.",
-                "categoria", "SMS Falso",
-                "tags", "SMS,Dados,Urgente",
-                "fonte", "Agência de Notícias"
-            ),
-            Map.of(
-                "titulo", "Falso atendente se passa por setor antifraude",
-                "descricao", "Novo golpe detectado: criminosos se passam por atendentes de bancos dizendo que o cliente 'confirme dados' para cancelar 'transações suspeitas'. Bancos reforçam que nunca solicitam senhas.",
-                "categoria", "Engenharia Social",
-                "tags", "Telefone,Senha,Antifraude",
-                "fonte", "InfoSec Brasil"
-            ),
-            Map.of(
-                "titulo", "Golpe do boleto falso cresce durante pagamento de impostos",
-                "descricao", "Criminosos criam boletos adulterados com código de barras similares. Especialistas alertam para sempre verificar o destinatário antes de realizar o pagamento.",
-                "categoria", "Boleto Falso",
-                "tags", "Boleto,Impostos,Código de barras",
-                "fonte", "Economia Digital"
-            ),
-            Map.of(
-                "titulo", "E-mails falsos imitam notificações de cartão de crédito",
-                "descricao", "Golpistas enviam mensagens convincentes sobre 'cartão bloqueado', levando usuários a clicar em links falsos. Ao clicar, usuários são levados a sites que clonam credenciais.",
-                "categoria", "Phishing Email",
-                "tags", "E-mail,Cartão,Link Falso",
-                "fonte", "Tech Security"
-            ),
-            Map.of(
-                "titulo", "Novo golpe do PIX faz vítimas nas redes sociais",
-                "descricao", "Criminosos estão utilizando perfis falsos em redes sociais para aplicar golpes envolvendo transferências PIX. Vítimas são enganadas com promessas de promoções inexistentes.",
-                "categoria", "Golpe PIX",
-                "tags", "PIX,Redes Sociais,Promoção Falsa",
-                "fonte", "Segurança Digital"
-            ),
-            Map.of(
-                "titulo", "Golpe do motoboy falso se espalha pelas grandes cidades",
-                "descricao", "Falsos motoboys estão recolhendo cartões de crédito e débito em residências, alegando serem funcionários de bancos. Instituições financeiras alertam que nunca enviam motoboys para recolher cartões.",
-                "categoria", "Engenharia Social",
-                "tags", "Cartão,Motoboy,Presencial",
-                "fonte", "Notícias Urbanas"
-            ),
-            Map.of(
-                "titulo", "Aplicativos falsos de bancos proliferam em lojas não oficiais",
-                "descricao", "Pesquisadores de segurança identificaram dezenas de aplicativos falsos que imitam apps bancários legítimos. Os apps maliciosos roubam credenciais e dados financeiros dos usuários.",
-                "categoria", "Malware Bancário",
-                "tags", "Aplicativo,Malware,Dados",
-                "fonte", "Cybersecurity News"
-            )
-        );
+                Map.of(
+                        "titulo", "Novo golpe usa números muito parecidos com os de bancos oficiais",
+                        "descricao",
+                        "Criminosos estão utilizando números quase idênticos aos de centrais de atendimento para enganar clientes. Especialistas alertam para sempre verificar o contato antes de responder.",
+                        "categoria", "Phishing",
+                        "tags", "Telefone,Bancos,Alerta Máximo",
+                        "fonte", "Portal de Notícias"),
+                Map.of(
+                        "titulo", "Aumento expressivo de tentativas de phishing por SMS em todo o Brasil",
+                        "descricao",
+                        "SMS falsos obtêm sucesso elevado em 'desbloqueio imediato do cartão'. Ao clicar, vítimas são levadas a páginas falsas que solicitam dados bancários.",
+                        "categoria", "SMS Falso",
+                        "tags", "SMS,Dados,Urgente",
+                        "fonte", "Agência de Notícias"),
+                Map.of(
+                        "titulo", "Falso atendente se passa por setor antifraude",
+                        "descricao",
+                        "Novo golpe detectado: criminosos se passam por atendentes de bancos dizendo que o cliente 'confirme dados' para cancelar 'transações suspeitas'. Bancos reforçam que nunca solicitam senhas.",
+                        "categoria", "Engenharia Social",
+                        "tags", "Telefone,Senha,Antifraude",
+                        "fonte", "InfoSec Brasil"),
+                Map.of(
+                        "titulo", "Golpe do boleto falso cresce durante pagamento de impostos",
+                        "descricao",
+                        "Criminosos criam boletos adulterados com código de barras similares. Especialistas alertam para sempre verificar o destinatário antes de realizar o pagamento.",
+                        "categoria", "Boleto Falso",
+                        "tags", "Boleto,Impostos,Código de barras",
+                        "fonte", "Economia Digital"),
+                Map.of(
+                        "titulo", "E-mails falsos imitam notificações de cartão de crédito",
+                        "descricao",
+                        "Golpistas enviam mensagens convincentes sobre 'cartão bloqueado', levando usuários a clicar em links falsos. Ao clicar, usuários são levados a sites que clonam credenciais.",
+                        "categoria", "Phishing Email",
+                        "tags", "E-mail,Cartão,Link Falso",
+                        "fonte", "Tech Security"),
+                Map.of(
+                        "titulo", "Novo golpe do PIX faz vítimas nas redes sociais",
+                        "descricao",
+                        "Criminosos estão utilizando perfis falsos em redes sociais para aplicar golpes envolvendo transferências PIX. Vítimas são enganadas com promessas de promoções inexistentes.",
+                        "categoria", "Golpe PIX",
+                        "tags", "PIX,Redes Sociais,Promoção Falsa",
+                        "fonte", "Segurança Digital"),
+                Map.of(
+                        "titulo", "Golpe do motoboy falso se espalha pelas grandes cidades",
+                        "descricao",
+                        "Falsos motoboys estão recolhendo cartões de crédito e débito em residências, alegando serem funcionários de bancos. Instituições financeiras alertam que nunca enviam motoboys para recolher cartões.",
+                        "categoria", "Engenharia Social",
+                        "tags", "Cartão,Motoboy,Presencial",
+                        "fonte", "Notícias Urbanas"),
+                Map.of(
+                        "titulo", "Aplicativos falsos de bancos proliferam em lojas não oficiais",
+                        "descricao",
+                        "Pesquisadores de segurança identificaram dezenas de aplicativos falsos que imitam apps bancários legítimos. Os apps maliciosos roubam credenciais e dados financeiros dos usuários.",
+                        "categoria", "Malware Bancário",
+                        "tags", "Aplicativo,Malware,Dados",
+                        "fonte", "Cybersecurity News"));
 
         for (Map<String, String> noticiaData : noticiasExemplo) {
             try {
                 // Verifica se já existe uma notícia com título similar
                 String titulo = noticiaData.get("titulo");
                 List<NoticiaGolpe> existentes = noticiaRepository
-                    .findByTituloContainingIgnoreCaseOrDescricaoContainingIgnoreCaseOrderByDataPublicacaoDesc(titulo, "");
+                        .findByTituloContainingIgnoreCaseOrDescricaoContainingIgnoreCaseOrderByDataPublicacaoDesc(
+                                titulo, "");
 
                 if (existentes.isEmpty()) {
                     NoticiaGolpe noticia = new NoticiaGolpe();
@@ -483,7 +497,8 @@ public class NoticiaGolpeService {
                     noticia.setTags(noticiaData.get("tags"));
                     noticia.setFonte(noticiaData.get("fonte"));
                     noticia.setDataPublicacao(LocalDateTime.now().minusHours(new Random().nextInt(48)));
-                    noticia.setUrlNoticia("https://exemplo.com/noticia-" + UUID.randomUUID().toString().substring(0, 8));
+                    noticia.setUrlNoticia(
+                            "https://exemplo.com/noticia-" + UUID.randomUUID().toString().substring(0, 8));
                     noticia.setUrlImagem(null);
 
                     noticiaRepository.save(noticia);
