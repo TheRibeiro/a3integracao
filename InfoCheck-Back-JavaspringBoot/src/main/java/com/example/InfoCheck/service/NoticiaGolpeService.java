@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -27,12 +26,10 @@ public class NoticiaGolpeService {
     @Autowired
     private NoticiaGolpeRepository noticiaRepository;
 
-    @Autowired
-    private RestTemplate restTemplate;
-
     @Value("${newsapi.key:YOUR_NEWS_API_KEY_HERE}")
     private String newsApiKey;
 
+    private final RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
     // Palavras-chave para buscar noticias sobre golpes (lista ampliada, sem
     // acentuacao)
@@ -95,159 +92,34 @@ public class NoticiaGolpeService {
     /**
      * Atualiza as notícias buscando de APIs externas
      * Este método é executado automaticamente a cada 30 minutos
-     * Executa de forma assíncrona para não bloquear a inicialização
      */
-    @Async
-    @Scheduled(fixedDelay = 1800000, initialDelay = 300000) // 30 minutos delay, começa após 5 minutos
+    @Scheduled(fixedDelay = 1800000) // 30 minutos
     public void atualizarNoticiasAutomaticamente() {
-        log.info("⏰ Iniciando atualização automática de notícias (Background Task)");
+        log.info("Iniciando atualização automática de notícias");
         buscarNoticiasDeAPIs();
-    }
-
-    /**
-     * Testa a conectividade com a News API
-     * Útil para diagnosticar problemas de rede no Render
-     */
-    public Map<String, Object> testarConectividadeAPI() {
-        Map<String, Object> resultado = new HashMap<>();
-
-        log.info("🧪 ============================================");
-        log.info("🧪 INICIANDO TESTE DE CONECTIVIDADE");
-        log.info("🧪 ============================================");
-
-        // Verifica se a API key está configurada
-        if (newsApiKey == null || newsApiKey.equals("YOUR_NEWS_API_KEY_HERE")) {
-            resultado.put("sucesso", false);
-            resultado.put("mensagem", "API Key não configurada");
-            resultado.put("detalhes", "Configure a variável de ambiente 'newsapi.key'");
-            log.error("❌ API Key não configurada");
-            return resultado;
-        }
-
-        resultado.put("apiKeyConfigurada", true);
-        resultado.put("apiKeyPreview", newsApiKey.substring(0, Math.min(8, newsApiKey.length())) + "***");
-
-        // Testa uma requisição simples
-        try {
-            String testKeyword = "teste";
-            String encodedKeyword = URLEncoder.encode(testKeyword, StandardCharsets.UTF_8);
-            String url = String.format(
-                    "https://newsapi.org/v2/everything?q=%s&pageSize=1&apiKey=%s",
-                    encodedKeyword,
-                    newsApiKey);
-
-            log.info("🔗 URL de teste: {}", url.replace(newsApiKey, "***"));
-
-            long startTime = System.currentTimeMillis();
-            String response = restTemplate.getForObject(url, String.class);
-            long duration = System.currentTimeMillis() - startTime;
-
-            log.info("⏱️ Tempo de resposta: {}ms", duration);
-
-            if (response == null || response.isEmpty()) {
-                resultado.put("sucesso", false);
-                resultado.put("mensagem", "Resposta vazia da API");
-                log.error("❌ Resposta vazia");
-                return resultado;
-            }
-
-            JsonNode root = objectMapper.readTree(response);
-            String status = root.has("status") ? root.get("status").asText() : "unknown";
-
-            if (!status.equals("ok")) {
-                String errorMessage = root.has("message") ? root.get("message").asText() : "Erro desconhecido";
-                resultado.put("sucesso", false);
-                resultado.put("mensagem", "Erro da News API: " + errorMessage);
-                resultado.put("statusAPI", status);
-                log.error("❌ Erro da API: {}", errorMessage);
-                return resultado;
-            }
-
-            resultado.put("sucesso", true);
-            resultado.put("mensagem", "Conectividade OK - API respondeu corretamente");
-            resultado.put("tempoResposta", duration + "ms");
-            resultado.put("statusAPI", status);
-
-            log.info("✅ Conectividade testada com sucesso!");
-            log.info("✅ Tempo de resposta: {}ms", duration);
-
-        } catch (org.springframework.web.client.ResourceAccessException e) {
-            resultado.put("sucesso", false);
-            resultado.put("mensagem", "Erro de conectividade - Timeout ou bloqueio de rede");
-            resultado.put("erro", e.getMessage());
-            resultado.put("causaRaiz", e.getCause() != null ? e.getCause().getMessage() : "Desconhecida");
-            log.error("🚫 Erro de conectividade: {}", e.getMessage());
-        } catch (org.springframework.web.client.HttpClientErrorException e) {
-            resultado.put("sucesso", false);
-            resultado.put("mensagem", "Erro HTTP " + e.getStatusCode());
-            resultado.put("detalhes", e.getResponseBodyAsString());
-            log.error("🚫 Erro HTTP {}: {}", e.getStatusCode(), e.getResponseBodyAsString());
-        } catch (Exception e) {
-            resultado.put("sucesso", false);
-            resultado.put("mensagem", "Erro ao testar conectividade");
-            resultado.put("erro", e.getMessage());
-            resultado.put("tipoExcecao", e.getClass().getName());
-            log.error("❌ Erro genérico: {}", e.getMessage(), e);
-        }
-
-        log.info("🧪 ============================================");
-        log.info("🧪 FIM DO TESTE DE CONECTIVIDADE");
-        log.info("🧪 ============================================");
-
-        return resultado;
     }
 
     /**
      * Busca notícias de APIs externas (News API)
      */
     public void buscarNoticiasDeAPIs() {
-        log.info("🚀 ============================================");
-        log.info("🚀 INICIANDO BUSCA DE NOTÍCIAS DE APIs EXTERNAS");
-        log.info("🚀 ============================================");
+        log.info("Buscando notícias de APIs externas");
 
         // Se não houver API key configurada, adiciona notícias de exemplo
         if (newsApiKey == null || newsApiKey.equals("YOUR_NEWS_API_KEY_HERE")) {
-            log.warn("⚠️ News API key não configurada. Adicionando notícias de exemplo.");
+            log.warn("News API key não configurada. Adicionando notícias de exemplo.");
             adicionarNoticiasDeExemplo();
             return;
         }
 
-        log.info("✅ API Key configurada: {}***", newsApiKey.substring(0, Math.min(8, newsApiKey.length())));
-        log.info("📊 Total de palavras-chave a buscar: {}", KEYWORDS.length);
-
         try {
-            int sucessos = 0;
-            int falhas = 0;
-
             // Busca notícias para cada palavra-chave
-            for (int i = 0; i < KEYWORDS.length; i++) {
-                String keyword = KEYWORDS[i];
-                log.info("📰 [{}/{}] Buscando keyword: '{}'", i + 1, KEYWORDS.length, keyword);
-
-                try {
-                    buscarNoticiasParaKeyword(keyword);
-                    sucessos++;
-                } catch (Exception e) {
-                    falhas++;
-                    log.error("❌ Falha ao buscar keyword '{}': {}", keyword, e.getMessage());
-                }
-
-                // Pequena pausa entre requisições para evitar rate limiting
-                if (i < KEYWORDS.length - 1) {
-                    Thread.sleep(500); // 500ms entre requisições
-                }
+            for (String keyword : KEYWORDS) {
+                buscarNoticiasParaKeyword(keyword);
             }
-
-            log.info("📊 ============================================");
-            log.info("📊 RESULTADO DA BUSCA:");
-            log.info("📊 Sucessos: {} | Falhas: {}", sucessos, falhas);
-            log.info("📊 ============================================");
-
         } catch (Exception e) {
-            log.error("❌ Erro crítico ao buscar notícias: {}", e.getMessage());
-            log.error("❌ Stack trace completo: ", e);
+            log.error("Erro ao buscar notícias: {}", e.getMessage());
             // Em caso de erro, adiciona notícias de exemplo
-            log.warn("⚠️ Adicionando notícias de exemplo como fallback...");
             adicionarNoticiasDeExemplo();
         }
     }
@@ -256,76 +128,24 @@ public class NoticiaGolpeService {
      * Busca notícias para uma palavra-chave específica usando News API
      */
     private void buscarNoticiasParaKeyword(String keyword) {
-        String url = null;
         try {
             String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
-            url = String.format(
+            String url = String.format(
                     "https://newsapi.org/v2/everything?q=%s&language=pt&sortBy=publishedAt&pageSize=50&searchIn=title,description,content&apiKey=%s",
                     encodedKeyword,
                     newsApiKey);
 
-            log.info("🔄 Buscando notícias para keyword '{}' na URL: {}", keyword, url.replace(newsApiKey, "***"));
-
             String response = restTemplate.getForObject(url, String.class);
-
-            if (response == null || response.isEmpty()) {
-                log.warn("⚠️ Resposta vazia da API para keyword '{}'", keyword);
-                return;
-            }
-
-            log.debug("✅ Resposta recebida da API (primeiros 200 caracteres): {}",
-                    response.length() > 200 ? response.substring(0, 200) + "..." : response);
-
             JsonNode root = objectMapper.readTree(response);
-
-            // Verifica se houve erro na API
-            if (root.has("status") && !root.get("status").asText().equals("ok")) {
-                String errorMessage = root.has("message") ? root.get("message").asText() : "Erro desconhecido";
-                log.error("❌ Erro retornado pela News API: {} (keyword: {})", errorMessage, keyword);
-                return;
-            }
-
             JsonNode articles = root.get("articles");
 
             if (articles != null && articles.isArray()) {
-                int articulosProcessados = 0;
                 for (JsonNode article : articles) {
                     salvarNoticiaSeNaoExistir(article);
-                    articulosProcessados++;
-                }
-                log.info("✅ Processados {} artigos para keyword '{}'", articulosProcessados, keyword);
-            } else {
-                log.warn("⚠️ Nenhum artigo encontrado para keyword '{}'", keyword);
-            }
-        } catch (org.springframework.web.client.ResourceAccessException e) {
-            // Erros de timeout ou conectividade (inclui SocketTimeout e SSL)
-            log.error("🚫 ERRO DE CONECTIVIDADE para keyword '{}': {}. Possível timeout ou bloqueio de rede.",
-                    keyword, e.getMessage());
-            log.error("   URL tentada: {}", url != null ? url.replace(newsApiKey, "***") : "N/A");
-            log.error("   Causa raiz: {}", e.getCause() != null ? e.getCause().getMessage() : "Desconhecida");
-
-            // Verifica se é timeout ou SSL especificamente
-            if (e.getCause() != null) {
-                String causaMsg = e.getCause().getClass().getName();
-                if (causaMsg.contains("SocketTimeout")) {
-                    log.error("   ⏱️ Tipo: TIMEOUT - A News API demorou demais para responder");
-                } else if (causaMsg.contains("SSL")) {
-                    log.error("   🔒 Tipo: ERRO DE SSL - Possível problema com certificados no Render");
                 }
             }
-        } catch (org.springframework.web.client.HttpClientErrorException e) {
-            // Erros 4xx (cliente)
-            log.error("🚫 ERRO HTTP {} ao buscar notícias para keyword '{}': {}",
-                    e.getStatusCode(), keyword, e.getResponseBodyAsString());
-            log.error("   Verifique: API Key, limites de requisições, ou URL malformada");
-        } catch (org.springframework.web.client.HttpServerErrorException e) {
-            // Erros 5xx (servidor)
-            log.error("🚫 ERRO DO SERVIDOR (5xx) ao buscar notícias para keyword '{}': {} - {}",
-                    keyword, e.getStatusCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("❌ Erro genérico ao buscar noticias para keyword '{}': {}", keyword, e.getMessage());
-            log.error("   Tipo de exceção: {}", e.getClass().getName());
-            log.error("   Stack trace: ", e);
+            log.error("Erro ao buscar noticias para keyword '{}': {}", keyword, e.getMessage());
         }
     }
 

@@ -89,41 +89,15 @@ public class NoticiaGolpeController {
         try {
             noticiaService.buscarNoticiasDeAPIs();
             return ResponseEntity.ok(Map.of(
-                "mensagem", "Atualização de notícias iniciada com sucesso",
-                "status", "success"
-            ));
+                    "mensagem", "Atualização de notícias iniciada com sucesso",
+                    "status", "success"));
         } catch (Exception e) {
             log.error("Erro ao atualizar notícias: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                    "mensagem", "Erro ao atualizar notícias",
-                    "status", "error",
-                    "erro", e.getMessage()
-                ));
-        }
-    }
-
-    /**
-     * GET /api/noticias/teste-conectividade - Testa conectividade com News API
-     */
-    @GetMapping("/teste-conectividade")
-    public ResponseEntity<Map<String, Object>> testeConectividade() {
-        log.info("Requisição para testar conectividade com News API");
-        try {
-            Map<String, Object> resultado = noticiaService.testarConectividadeAPI();
-            
-            boolean sucesso = (boolean) resultado.get("sucesso");
-            HttpStatus status = sucesso ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
-            
-            return ResponseEntity.status(status).body(resultado);
-        } catch (Exception e) {
-            log.error("Erro ao testar conectividade: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                    "sucesso", false,
-                    "mensagem", "Erro ao testar conectividade",
-                    "erro", e.getMessage()
-                ));
+                    .body(Map.of(
+                            "mensagem", "Erro ao atualizar notícias",
+                            "status", "error",
+                            "erro", e.getMessage()));
         }
     }
 }
